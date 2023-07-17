@@ -13,7 +13,7 @@ On dispose d'un jeu d'entrainement constitué de 100000 images de taille 64x64, 
 
 ## Exploration des données
 
-On charge le jeu de données dans un dataframe contenant les chemins d'accès aux images et les labels correspondant
+On charge le jeu de données dans un dataframe contenant les chemins d'accès aux images et les labels correspondants
 
 
 ```python
@@ -92,7 +92,7 @@ Voici un aperçu des images auxquelles le modèle devra assigner un label
 ```python
 from thera_panacea.visualize import visualize_sample
 
-
+df.head()
 visualize_sample(df, n_rows=1)
 ```
 
@@ -223,7 +223,7 @@ La question du déséquilibre des données pourra se traiter via un rééchantil
 
 Le problème délicat à traiter est celui des images mal labelisées. Il est clair qu'il y en a un certain nombre et qu'il n'est pas question de corriger à la main les 100000 labels. 
 
-Pour résoudre ce problème, on va dans un premier temps mettre au point un modèle "suffisament" performant qui s'entrainera sur le jeu de données en l'état. Ensuite on utilisera la librairie [Link CleanLab Here](https://github.com/cleanlab/cleanlab) pour repérer les éventuelles erreurs de labelisation en se basant sur le résultats du modèle.
+Pour résoudre ce problème, on va dans un premier temps mettre au point un modèle "suffisament" performant qui s'entrainera sur le jeu de données en l'état. Ensuite on utilisera la librairie [CleanLab](https://github.com/cleanlab/cleanlab) pour repérer les éventuelles erreurs de labelisation en se basant sur le résultats du modèle.
 
 Ces données seront alors écartées et on pourra vérifier si cela a un effet bénéfique sur les résultats que donne le même modèle sur ce jeu de données modifié.
 
