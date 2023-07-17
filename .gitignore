@@ -1,0 +1,14 @@
+# Virtual env
+.venv
+
+# python
+__pycache__
+
+# dev
+notebooks
+*.ipynb
+
+# data
+data
+pickles
+pth
