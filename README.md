@@ -1,12 +1,3 @@
-```python
-%load_ext autoreload
-%autoreload 2
-```
-
-    The autoreload extension is already loaded. To reload it, use:
-      %reload_ext autoreload
-
-
 # Le problème
 
 On dispose d'un jeu d'entrainement constitué de 100000 images de taille 64x64, séparées en deux classes (0 et 1). L'objectif est de mettre au point un modèle de classification.  
@@ -233,5 +224,76 @@ Enfin, on pourra terminer en utilisant une architecture de modèle plus complexe
 
 
 ```python
+import torch
 
+from thera_panacea.model.baseline_model import BaselineModel
+
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = BaselineModel().to(device)
+
+model
 ```
+
+
+
+
+    BaselineModel(
+      (conv1): Conv2d(3, 6, kernel_size=(5, 5), stride=(1, 1))
+      (pool): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (conv2): Conv2d(6, 16, kernel_size=(5, 5), stride=(1, 1))
+      (fc1): Linear(in_features=2704, out_features=256, bias=True)
+      (fc2): Linear(in_features=256, out_features=32, bias=True)
+      (fc3): Linear(in_features=32, out_features=2, bias=True)
+    )
+
+
+
+Après entrainement de ce modèle sur les données originales on obtient les résultats suivants  
+
+
+```python
+from pathlib import Path
+import pickle
+
+
+serialized_path = Path("serialized")
+session_type_path = Path("raw_data_training")
+
+with open(serialized_path / session_type_path / "results.pkl", "rb") as f:
+    results = pickle.load(f)
+
+for k, v in results.items():
+    print(k)
+    print(v)
+    print("\n")
+```
+
+    hter
+    0.10929087655430367
+    
+    
+    accuracy
+    0.8816
+    
+    
+    confusion_matrix
+    [[ 2171   234]
+     [ 2134 15461]]
+    
+    
+    classification_report
+                  precision    recall  f1-score   support
+    
+               0       0.50      0.90      0.65      2405
+               1       0.99      0.88      0.93     17595
+    
+        accuracy                           0.88     20000
+       macro avg       0.74      0.89      0.79     20000
+    weighted avg       0.93      0.88      0.89     20000
+    
+    
+    
+
+
+On entraine à nouveau ce modèle via une cross validation, on récupère les prédictions sur chacun des splits de validation et on obtient les résultats
