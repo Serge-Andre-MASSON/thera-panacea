@@ -13,7 +13,7 @@ class BaselineModel(nn.Module):
         self.fc2 = nn.Linear(256, 32)
         self.fc3 = nn.Linear(32, 2)
 
-    def forward(self, x):
+    def forward(self, x) -> torch.Tensor:
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1)
