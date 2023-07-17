@@ -27,10 +27,8 @@ train_img_dir = data_root_dir / "train_img"
 label_file = data_root_dir / "label_train.txt"
 
 df = extract_to_df(train_img_dir, label_file)
-df.head()
+display(df.head())
 ```
-
-
 
 
 <div>
@@ -86,14 +84,13 @@ df.head()
 </div>
 
 
-
 On note que le jeu de données est déséquilibré avec un peu moins de 4 fois plus de labels 1 que 0.
 
 Voici un aperçu des images auxquelles le modèle devra assigner un label
 
 
 ```python
-from thera_panacea.etl.visualize import visualize_sample
+from thera_panacea.visualize import visualize_sample
 
 
 visualize_sample(df, n_rows=1)
@@ -232,7 +229,7 @@ Ces données seront alors écartées et on pourra vérifier si cela a un effet b
 
 Enfin, on pourra terminer en utilisant une architecture de modèle plus complexe en espérant obtenir d'encore meilleurs résultats.
 
-# Modèle de base
+## Modèle de base
 
 
 ```python
