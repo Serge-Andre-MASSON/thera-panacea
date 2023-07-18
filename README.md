@@ -75,7 +75,7 @@ display(df.head())
 </div>
 
 
-On note que le jeu de données est déséquilibré avec un peu moins de 4 fois plus de labels 1 que 0.
+On note que le jeu de données est déséquilibré avec environ 87% de labels 1.
 
 Voici un aperçu des images auxquelles le modèle devra assigner un label
 
@@ -89,7 +89,7 @@ visualize_sample(df, n_rows=1)
 
 
     
-![png](README_files/README_7_0.png)
+![png](README_files/README_6_0.png)
     
 
 
@@ -103,7 +103,7 @@ visualize_sample(positive_df)
 
 
     
-![png](README_files/README_9_0.png)
+![png](README_files/README_8_0.png)
     
 
 
@@ -115,18 +115,14 @@ visualize_sample(negative_df)
 
 
     
-![png](README_files/README_10_0.png)
+![png](README_files/README_9_0.png)
     
 
 
-Il semble à première vue que les visage affublés d'un chapeau, d'une paire de lunette ou encore d'une barbe soit labélisés 0. Le critère des lunettes ou des chapeaux apparaît assez clairement, ce qui est moins le cas pour la barbe (ou la moustache). 
+Il semble à première vue que les visage affublés d'un chapeau, d'une paire de lunettes ou encore d'une barbe/moustache soient labélisés 0. Le critère des lunettes ou des chapeaux apparaît assez clairement, ce qui est moins le cas pour la barbe (ou la moustache) comme l'illustrent les exemples ci-dessous.
 
 
 ```python
-from matplotlib import pyplot as plt
-from PIL import Image
-
-
 ambiguous_positive_df = df.loc[[75595, 85544, 7705, 60919, 14210, ]]
 visualize_sample(ambiguous_positive_df, n_rows=1)
 
@@ -136,13 +132,13 @@ visualize_sample(ambiguous_negative_df, n_rows=1)
 
 
     
-![png](README_files/README_12_0.png)
+![png](README_files/README_11_0.png)
     
 
 
 
     
-![png](README_files/README_12_1.png)
+![png](README_files/README_11_1.png)
     
 
 
@@ -158,7 +154,7 @@ visualize_sample(mislabelled_imgs, 1, 2)
 
 
     
-![png](README_files/README_14_0.png)
+![png](README_files/README_13_0.png)
     
 
 
@@ -179,11 +175,9 @@ sample_df = df.sample(30000)
 X, y = df_to_arrays(sample_df)
 ```
 
-      0%|          | 0/30000 [00:00<?, ?it/s]100%|██████████| 30000/30000 [00:18<00:00, 1630.89it/s]
-
-
 
 ```python
+from matplotlib import pyplot as plt
 from sklearn.feature_selection import SelectPercentile
 
 
@@ -202,7 +196,7 @@ plt.imshow(mask, cmap="gray")
 
 
     
-![png](README_files/README_18_1.png)
+![png](README_files/README_17_1.png)
     
 
 
@@ -214,7 +208,7 @@ La question du déséquilibre des données pourra se traiter via un rééchantil
 
 Le problème délicat à traiter est celui des images mal labelisées. Il est clair qu'il y en a un certain nombre et qu'il n'est pas question de corriger à la main les 100000 labels. 
 
-Pour résoudre ce problème, on va dans un premier temps mettre au point un modèle "suffisament" performant qui s'entrainera sur le jeu de données en l'état. Ensuite on utilisera la librairie [CleanLab](https://github.com/cleanlab/cleanlab) pour repérer les éventuelles erreurs de labelisation en se basant sur le résultats du modèle.
+Pour résoudre ce problème, on va dans un premier temps mettre au point un modèle "suffisament" performant qui s'entrainera sur le jeu de données en l'état. Ensuite on utilisera la librairie [CleanLab](https://github.com/cleanlab/cleanlab) pour repérer les éventuelles erreurs de labelisation en se basant sur les résultats du modèle.
 
 Ces données seront alors écartées et on pourra vérifier si cela a un effet bénéfique sur les résultats que donne le même modèle sur ce jeu de données modifié.
 
@@ -249,7 +243,7 @@ model
 
 
 
-Après entrainement de ce modèle sur les données originales on obtient les résultats suivants  
+Après entrainement de ce modèle sur les données originales on obtient les résultats suivants sur l'ensemble de test (random_state=123) 
 
 
 ```python
@@ -270,30 +264,153 @@ for k, v in results.items():
 ```
 
     hter
-    0.10929087655430367
+    0.11902502541888732
     
     
     accuracy
-    0.8816
+    0.891
     
     
     confusion_matrix
-    [[ 2171   234]
-     [ 2134 15461]]
+    [[ 2087   318]
+     [ 1862 15733]]
     
     
     classification_report
                   precision    recall  f1-score   support
     
-               0       0.50      0.90      0.65      2405
-               1       0.99      0.88      0.93     17595
+               0       0.53      0.87      0.66      2405
+               1       0.98      0.89      0.94     17595
     
-        accuracy                           0.88     20000
-       macro avg       0.74      0.89      0.79     20000
-    weighted avg       0.93      0.88      0.89     20000
+        accuracy                           0.89     20000
+       macro avg       0.75      0.88      0.80     20000
+    weighted avg       0.93      0.89      0.90     20000
     
     
     
 
 
-On entraine à nouveau ce modèle via une cross validation, on récupère les prédictions sur chacun des splits de validation et on obtient les résultats
+## Nettoyage des données
+
+On entraine à nouveau ce modèle via une cross validation et on récupère les prédictions sur chacun des splits de validation. Les résultats en moyenne sur chaque split sont 
+
+
+```python
+with open(Path("serialized/raw_data_cv_training/results.pkl"), "rb") as f:
+    results = pickle.load(f)
+
+for k, v in results.items():
+    print(k)
+    print(v)
+    print("\n")
+```
+
+    hter
+    0.1255460343961204
+    
+    
+    accuracy
+    0.87011
+    
+    
+    confusion_matrix
+    [[10652  1450]
+     [11539 76359]]
+    
+    
+    classification_report
+                  precision    recall  f1-score   support
+    
+               0       0.48      0.88      0.62     12102
+               1       0.98      0.87      0.92     87898
+    
+        accuracy                           0.87    100000
+       macro avg       0.73      0.87      0.77    100000
+    weighted avg       0.92      0.87      0.89    100000
+    
+    
+    
+
+
+Ces résultats sont utilisés pour essayer de détecter les images probablement mal labélisées.
+
+
+```python
+import pickle
+
+import numpy as np
+from cleanlab.filter import find_label_issues
+
+
+with open(Path("serialized/raw_data_cv_training/oos_probs_df.pkl"), "rb") as f:
+    oos_probs_df = pickle.load(f)
+
+probs = np.zeros((len(oos_probs_df), 2))
+probs[:, 0] = oos_probs_df["prob_0"]
+probs[:, 1] = oos_probs_df["prob_1"]
+
+ranked_label_issues = find_label_issues(
+    oos_probs_df["label"],
+    probs,
+    return_indices_ranked_by="self_confidence",
+)
+
+print(
+    f"Le nombre de données détectées comme étant mal labelisées est de {len(ranked_label_issues)}.")
+```
+
+    Le nombre de données détectées comme étant mal labelisée est de 5143.
+
+
+## Résultats après nettoyage
+
+On se débarrasse ensuite des ces données et on réentraine le modèle pour constater une amélioration des résultats, entre autres :
+
+- hter : 0.13 -> 0.08
+- accuracy : 0.87 -> 0.93
+
+
+```python
+with open(Path("serialized/cleaned_data_training/results.pkl"), "rb") as f:
+    results = pickle.load(f)
+
+for k, v in results.items():
+    print(k)
+    print(v)
+    print("\n")
+```
+
+    hter
+    0.07567416403617055
+    
+    
+    accuracy
+    0.9349567784102888
+    
+    
+    confusion_matrix
+    [[ 2052   202]
+     [ 1032 15686]]
+    
+    
+    classification_report
+                  precision    recall  f1-score   support
+    
+               0       0.67      0.91      0.77      2254
+               1       0.99      0.94      0.96     16718
+    
+        accuracy                           0.93     18972
+       macro avg       0.83      0.92      0.87     18972
+    weighted avg       0.95      0.93      0.94     18972
+    
+    
+    
+
+
+## Transfert learning
+
+wip
+
+# Modèle et résultat final
+
+wip
