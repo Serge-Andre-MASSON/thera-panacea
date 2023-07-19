@@ -1,6 +1,8 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+from torchvision import transforms
+from torchvision.transforms import ToTensor, Normalize
 
 
 class BaselineModel(nn.Module):
@@ -21,3 +23,9 @@ class BaselineModel(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
+
+
+preprocess = transforms.Compose([
+    ToTensor(),
+    Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+])
