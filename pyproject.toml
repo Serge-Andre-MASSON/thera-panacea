@@ -27,6 +27,9 @@ dynamic = ["dependencies"]
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
+[tool.setuptools]
+packages = ["thera_panacea"]
+
 
 [project.urls]
 "Homepage" = "https://github.com/Serge-Andre-MASSON/thera-panacea"
