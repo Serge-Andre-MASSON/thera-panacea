@@ -27,8 +27,8 @@ dynamic = ["dependencies"]
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
-[tool.setuptools]
-packages = ["thera_panacea"]
+[tool.setuptools.packages.find]
+where = ["src"] 
 
 
 [project.urls]
