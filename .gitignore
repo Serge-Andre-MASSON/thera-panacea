@@ -13,3 +13,6 @@ serialized
 data
 pickles
 pth
+
+# setuptolls
+*.egg-info

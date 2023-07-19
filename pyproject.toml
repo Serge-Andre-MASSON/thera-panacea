@@ -1,25 +1,35 @@
-[tool.poetry]
-name = "thera-panacea"
-version = "0.1.0"
-description = "Technical assessment"
-authors = ["Serge <serge.andre.masson@gmail.com>"]
-readme = "README.md"
-packages = [{include = "thera_panacea"}]
-
-[tool.poetry.dependencies]
-python = "^3.10"
-pandas = "^2.0.3"
-matplotlib = "^3.7.2"
-pillow = "^10.0.0"
-scikit-learn = "^1.3.0"
-tqdm = "^4.65.0"
-cleanlab = "^2.4.0"
-
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.24.0"
-jupyter = "^1.0.0"
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "thera-panacea"
+version = "0.0.1"
+authors = [
+  { name="Serge MASSON", email="serge.andre.masson@gmail.com" },
+]
+description = "Technical assessment"
+readme = "README.md"
+requires-python = ">=3.10"
+
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Computer vision",
+    "features engineering",
+    "machine learning"
+]
+
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+where = ["thera_panacea"] 
+
+
+[project.urls]
+"Homepage" = "https://github.com/Serge-Andre-MASSON/thera-panacea"
