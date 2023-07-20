@@ -5,14 +5,12 @@
 __pycache__
 
 # dev
-notebooks_
-*.ipynb
-serialized
+README.ipynb
 
 # data
 data
-pickles
-pth
+*.pkl
+*.pth
 
-# setuptolls
+# setuptools
 *.egg-info
