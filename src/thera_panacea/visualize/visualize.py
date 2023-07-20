@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def visualize_sample(df: pd.DataFrame, n_rows: int = 3, n_cols: int = 5, ):
+def visualize_sample(df: pd.DataFrame, n_rows: int = 3, n_cols: int = 5, title="label"):
     n_samples = n_rows * n_cols
     if n_samples <= 1:
         raise ValueError("Sample size (n_rows*n_cols) should be at least 2.")
