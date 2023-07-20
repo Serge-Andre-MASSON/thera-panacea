@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from sklearn.metrics import confusion_matrix
 from tqdm import tqdm
 import torch
@@ -8,7 +9,7 @@ from torch.nn import CrossEntropyLoss
 from thera_panacea.model.baseline_model import BaselineModel
 
 
-class BaselineTrainer:
+class Trainer:
     def __init__(
         self,
         model: BaselineModel,
@@ -57,7 +58,8 @@ class BaselineTrainer:
         self.optimizer.zero_grad()
 
         logits = self.model(imgs)
-        loss: torch.Tensor = self.loss_function(logits, labels,)
+        loss: torch.Tensor = self.loss_function(logits, labels)
+
         loss.backward()
         self.optimizer.step()
 
