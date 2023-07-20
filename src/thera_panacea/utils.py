@@ -4,12 +4,14 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 
 
 def get_class_weights(df, device):
+    """Return the classe weight in order to handle unbalancing."""
     class_weight_ = compute_class_weight(
         "balanced", classes=[0, 1], y=df["label"])
     return torch.FloatTensor(class_weight_).to(device)
 
 
 def get_results(preds, labels):
+    """Return a dict containing a metrics summary of the results of a model."""
     _, fp, fn, _ = confusion_matrix(labels, preds, normalize="true").ravel()
     hter = (fp + fn) / 2
 

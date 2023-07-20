@@ -10,6 +10,8 @@ from thera_panacea.model.baseline_model import BaselineModel
 
 
 class Trainer:
+    """Generic trainer for deep learning models. It has a stopping criterion based on the half total error rate (hter)."""
+
     def __init__(
         self,
         model: BaselineModel,

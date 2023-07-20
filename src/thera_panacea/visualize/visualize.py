@@ -27,5 +27,5 @@ def visualize_sample(df: pd.DataFrame, n_rows: int = 3, n_cols: int = 5, title="
             with Image.open(img_path) as img:
                 ax.imshow(img)
                 # img = np.asarray(f)
-            ax.set_title(f"label: {label} ({img_path.name})")
+            ax.set_title(f"{title}: {label} ({img_path.name})")
             ax.set_axis_off()
