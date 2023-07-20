@@ -81,7 +81,7 @@ Voici un aperçu des images auxquelles le modèle devra assigner un label
 
 
 ```python
-from thera_panacea.visualize import visualize_sample
+from thera_panacea.visualize.visualize import visualize_sample
 
 df.head()
 visualize_sample(df, n_rows=1)
@@ -212,7 +212,7 @@ Pour résoudre ce problème, on va dans un premier temps mettre au point un mod�
 
 Ces données seront alors écartées et on pourra vérifier si cela a un effet bénéfique sur les résultats que donne le même modèle sur ce jeu de données modifié.
 
-Enfin, on pourra terminer en utilisant une architecture de modèle plus complexe en espérant obtenir d'encore meilleurs résultats.
+Enfin, on pourrait aller plus loin avec des moyens de calcul suffisant en utilisant une architecture de modèle plus complexe en espérant obtenir d'encore meilleurs résultats.
 
 ## Modèle de base
 
@@ -243,94 +243,49 @@ model
 
 
 
-Après entrainement de ce modèle sur les données originales on obtient les résultats suivants sur l'ensemble de test (random_state=123) 
+On entraine ce modèle via une cross validation et on récupère les prédictions sur chacun des splits de validation. Les résultats en moyenne sur chaque split sont 
 
 
 ```python
-from pathlib import Path
 import pickle
 
+from thera_panacea.utils import display_results
 
-serialized_path = Path("serialized")
-session_type_path = Path("raw_data_training")
 
-with open(serialized_path / session_type_path / "results.pkl", "rb") as f:
-    results = pickle.load(f)
+with open(Path("raw_data_results.pkl"), "rb") as f:
+    results: dict = pickle.load(f)
 
-for k, v in results.items():
-    print(k)
-    print(v)
-    print("\n")
+display_results(results)
 ```
 
     hter
-    0.11902502541888732
+    0.12634888727243115
     
     
     accuracy
-    0.891
+    0.83469
     
     
     confusion_matrix
-    [[ 2087   318]
-     [ 1862 15733]]
+    [[11195   907]
+     [15624 72274]]
     
     
     classification_report
                   precision    recall  f1-score   support
     
-               0       0.53      0.87      0.66      2405
-               1       0.98      0.89      0.94     17595
+               0       0.42      0.93      0.58     12102
+               1       0.99      0.82      0.90     87898
     
-        accuracy                           0.89     20000
-       macro avg       0.75      0.88      0.80     20000
-    weighted avg       0.93      0.89      0.90     20000
+        accuracy                           0.83    100000
+       macro avg       0.70      0.87      0.74    100000
+    weighted avg       0.92      0.83      0.86    100000
     
     
     
 
 
 ## Nettoyage des données
-
-On entraine à nouveau ce modèle via une cross validation et on récupère les prédictions sur chacun des splits de validation. Les résultats en moyenne sur chaque split sont 
-
-
-```python
-with open(Path("serialized/raw_data_cv_training/results.pkl"), "rb") as f:
-    results = pickle.load(f)
-
-for k, v in results.items():
-    print(k)
-    print(v)
-    print("\n")
-```
-
-    hter
-    0.1255460343961204
-    
-    
-    accuracy
-    0.87011
-    
-    
-    confusion_matrix
-    [[10652  1450]
-     [11539 76359]]
-    
-    
-    classification_report
-                  precision    recall  f1-score   support
-    
-               0       0.48      0.88      0.62     12102
-               1       0.98      0.87      0.92     87898
-    
-        accuracy                           0.87    100000
-       macro avg       0.73      0.87      0.77    100000
-    weighted avg       0.92      0.87      0.89    100000
-    
-    
-    
-
 
 Ces résultats sont utilisés pour essayer de détecter les images probablement mal labélisées.
 
@@ -342,7 +297,7 @@ import numpy as np
 from cleanlab.filter import find_label_issues
 
 
-with open(Path("serialized/raw_data_cv_training/oos_probs_df.pkl"), "rb") as f:
+with open(Path("oos_probs_df.pkl"), "rb") as f:
     oos_probs_df = pickle.load(f)
 
 probs = np.zeros((len(oos_probs_df), 2))
@@ -359,58 +314,89 @@ print(
     f"Le nombre de données détectées comme étant mal labelisées est de {len(ranked_label_issues)}.")
 ```
 
-    Le nombre de données détectées comme étant mal labelisée est de 5143.
+    Le nombre de données détectées comme étant mal labelisées est de 5712.
 
 
 ## Résultats après nettoyage
 
 On se débarrasse ensuite des ces données et on réentraine le modèle pour constater une amélioration des résultats, entre autres :
 
-- hter : 0.13 -> 0.08
-- accuracy : 0.87 -> 0.93
+- hter : 0.13 -> 0.07
+- accuracy : 0.83 -> 0.92
 
 
 ```python
-with open(Path("serialized/cleaned_data_training/results.pkl"), "rb") as f:
+with open(Path("cleaned_data_results.pkl"), "rb") as f:
     results = pickle.load(f)
 
-for k, v in results.items():
-    print(k)
-    print(v)
-    print("\n")
+display_results(results)
 ```
 
     hter
-    0.07567416403617055
+    0.07242261979591035
     
     
     accuracy
-    0.9349567784102888
+    0.917912822144448
     
     
     confusion_matrix
-    [[ 2052   202]
-     [ 1032 15686]]
+    [[ 2109   134]
+     [ 1414 15201]]
     
     
     classification_report
                   precision    recall  f1-score   support
     
-               0       0.67      0.91      0.77      2254
-               1       0.99      0.94      0.96     16718
+               0       0.60      0.94      0.73      2243
+               1       0.99      0.91      0.95     16615
     
-        accuracy                           0.93     18972
-       macro avg       0.83      0.92      0.87     18972
-    weighted avg       0.95      0.93      0.94     18972
+        accuracy                           0.92     18858
+       macro avg       0.79      0.93      0.84     18858
+    weighted avg       0.94      0.92      0.93     18858
     
     
     
 
-
-## Transfert learning
-
-wip
 
 # Modèle et résultat final
 
-wip
+Pour terminer, on entraine le model sur l'ensemble des données nettoyées et on génère le fichier label_val.txt.
+
+
+```python
+from pathlib import Path
+import pickle
+
+from thera_panacea.visualize.visualize import visualize_sample
+
+
+with open(Path("val_df.pkl"), "rb") as f:
+    val_df = pickle.load(f)
+
+
+positive_df = val_df[val_df["pred"] == 1]
+sample_val = positive_df.sample(15)
+visualize_sample(positive_df, title="pred")
+```
+
+
+    
+![png](README_files/README_33_0.png)
+    
+
+
+
+```python
+negative_df = val_df[val_df["pred"] == 0]
+sample_val = negative_df.sample(15)
+visualize_sample(negative_df, title="pred")
+```
+
+
+    
+![png](README_files/README_34_0.png)
+    
+
+
+Sur cet echantillon de prédiction concernant la classe 0, on note le manque de précision du modèle. Pour palier à ce problème, on pourrait utiliser d'autres modèles plus performants de ce point de vue. J'ai notament pu vérifier qu'un simple random forest donnait une meilleure précision sur la classe 0, bien qu'étant en contre partie moins performante sur la classe 1.
